@@ -1,0 +1,130 @@
+/*
+	Copyright 2016 Paul Broadhead
+	Contact: pjbroad@twinmoons.org.uk
+
+	This file is part of pi_sensors.
+
+	pi_sensors is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	pi_sensors is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with pi_sensors.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+body
+{
+	font-family: verdana, sans-serif;
+	color: #000000;
+	background-color: #E4E6EC;
+}
+
+div
+{
+	clear: both;
+}
+
+h1
+{
+	background-color: #7878de;
+	border:1px solid #888;
+	padding:5px;
+	text-align:left;
+	margin: 5px 0px 5px 0px;
+	clear: both;
+	font-size: 1.25em;
+}
+
+h2 {
+	background-color: #A0A0ED;
+	border:1px solid #888;
+	padding:5px;
+	text-align:left;
+	margin: 5px 0px 5px 0px;
+	clear: both;
+	font-size: 1.25em;
+}
+
+.alert {
+	color: red;
+	background-color: white;
+}
+
+h3
+{
+	background-color: #7878de;
+	border:0px solid #888;
+	padding:5px;
+	text-align:left;
+	margin: 5px 0px 5px 0px;
+	clear: both;
+	font-size: 1.0em;
+}
+
+
+#header ul
+{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+#header li
+{
+	font-size: 1.25em;
+	font-weight: bold;
+	background-color: #B2B2FF;
+	padding:5px;
+	float: left;
+	border:1px solid #888;
+	border-bottom-width: 0;
+	margin: 0px 2px 0px 0px;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-user-select: none;
+}
+
+#header li:hover
+{
+	cursor: pointer;
+	background-color: #C9C9FF;
+}
+
+#header li.selected
+{
+	background-color: #7878de;
+}
+
+#readings_graph .c3-line
+{
+	stroke-width: 4px;
+}
+
+#readings_graph .c3-circle
+{
+	stroke: black;
+	fill: white !important;
+	stroke-width: 1px;
+}
+
+.normal_text
+{
+  color: inherit;
+  text-decoration: inherit;
+}
+
+.graph_title
+{
+	dominant-baseline: hanging;
+	text-anchor: middle;
+	font-size: 2.5em;
+}

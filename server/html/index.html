@@ -1,0 +1,66 @@
+<!--
+	Copyright 2016 Paul Broadhead
+	Contact: pjbroad@twinmoons.org.uk
+
+	This file is part of pi_sensors.
+
+	pi_sensors is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	pi_sensors is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with pi_sensors.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pi Sensors</title>
+<link href="pi_sensors.css" rel="stylesheet" type="text/css">
+<link href="lib/c3.min.css" rel="stylesheet" type="text/css">
+<link href="lib/jquery-ui.min.css" rel="stylesheet" type="text/css">
+<script src="common.js"></script>
+<script src="pi_sensors_config.js"></script>
+<script src="pi_sensors_readings.js"></script>
+<script src="lib/jquery.min.js"></script>
+<script src="lib/jquery-ui.min.js"></script>
+<script src="lib/d3.min.js" charset="utf-8"></script>
+<script src="lib/c3.min.js"></script>
+</head>
+
+<body onload="pi_sensors_readings.init_page()">
+
+<div id="non_graph">
+<h2 id="readings_last"></h2>
+<div id="header">
+<ul><a href="/" class="normal_text"><li>Home</li></a></ul>
+<ul id="sensor_tabs"></ul>
+Full<input type="checkbox" onchange="pi_sensors_readings.build_tabs()" id="show_full">
+Log<input type="checkbox" onchange="pi_sensors_readings.update()" id="use_logscale">
+<h3></h3>
+</div>
+
+<div id="readings">
+<form id="controls">
+<select name="room" id="rooms" onchange="pi_sensors_readings.change_room();"></select>
+<button onclick="pi_sensors_readings.change_day(-1); return false;">&lt;</button>
+<button onclick="pi_sensors_readings.change_day(1); return false;">&gt;</button>
+<button onclick="pi_sensors_readings.change_day(0); return false;">Now</button>
+<input type="button" id="datepicker"  onchange="pi_sensors_readings.update()">
+</form>
+</div>
+<div id="error_message_panel"></div>
+</div>
+
+<div id="readings_graph"></div>
+
+</body>
+</html>
