@@ -116,6 +116,11 @@ h3
 	stroke-width: 1px;
 }
 
+#last_readings
+{
+	display: none;
+}
+
 .normal_text
 {
   color: inherit;

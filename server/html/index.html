@@ -39,7 +39,11 @@
 <body onload="pi_sensors_readings.init_page()">
 
 <div id="non_graph">
-<h2 id="readings_last"></h2>
+<h2>
+	<span id="last_time"></span>
+	<input type="checkbox" onchange="pi_sensors_readings.toggle_last_readings()" id="show_last_readings">
+	<span id="last_readings"></span>
+</h2>
 <div id="header">
 <ul><a href="/" class="normal_text"><li>Home</li></a></ul>
 <ul id="sensor_tabs"></ul>

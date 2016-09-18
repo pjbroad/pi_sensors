@@ -141,30 +141,45 @@ var pi_sensors_readings = pi_sensors_readings ||
 			}
 	},
 
+	toggle_last_readings: function()
+	{
+		var last_readings_h = document.getElementById("last_readings")
+		if (document.getElementById("show_last_readings").checked)
+			last_readings_h.style.display = 'inline';
+		else
+			last_readings_h.style.display = 'none';
+	},
+
 	current: function(room)
 	{
 		function display_last(response)
 		{
-			if (("data" in response) && (response.data != null))
+			var last_time_h = document.getElementById("last_time");
+			if (("data" in response) && (response.data.length > 0))
 			{
-				var record = response.data.record;
+				var first_reading = response.data[0].record;
 				var epoch_now = new Date().getTime();
-				var the_date = new Date(response.data.epoch * 1000);
+				var the_date = new Date(first_reading.epoch * 1000);
 				var thetext = this.formated_date(the_date) + " " +
 					("0" + the_date.getHours()).slice(-2) + ":" + ("0" + the_date.getMinutes()).slice(-2);
-				thetext += " | " + record.value;
-				if ("units" in record && record.units)
-					thetext += record.units;
-				if ((epoch_now/1000.0 - response.data.epoch) > 20*60)
+				if ((epoch_now/1000.0 - first_reading.epoch) > 20*60)
 					thetext += " <span class='alert'>OUTDATED</span>";
-				last_h.innerHTML = thetext;
+				last_time_h.innerHTML = thetext;
+				thetext = ""
+				for (var device in response.data)
+				{
+					var reading = response.data[device].record;
+					thetext += " | " + response.data[device].device + ": " + reading.record.value;
+					if ("units" in reading.record && reading.record.units)
+						thetext += " " + reading.record.units;
+				}
+				document.getElementById("last_readings").innerHTML = thetext;
 			}
 			else
-				last_h.innerHTML = "<span class='alert'>No Data Today</span>";
+				last_time_h.innerHTML = "<span class='alert'>No Data Today</span>";
 			var start_date = integer_date.date2yyyymmdd($( "#datepicker" ).datepicker( "getDate" ));
 			this.graph(start_date, this.current_room);
 		}
-		var last_h = document.getElementById("readings_last");
 		var start_date = integer_date.date2yyyymmdd(new Date());
 		var url = pi_sensors_config.paths["api"] + "/" + room + "/" + this.sensor_info.type + "/latest";
 		request_common.get_data(url, display_last.bind(this));
