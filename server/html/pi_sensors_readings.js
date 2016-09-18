@@ -192,11 +192,24 @@ var pi_sensors_readings = pi_sensors_readings ||
 			var the_columns = [];
 			var data = response.data;
 			var use_log = document.getElementById("use_logscale").checked;
+			var show_full = document.getElementById("show_full").checked;
 
 			var the_times = ['x'];
 			var the_device = (data.length) ?data[0].record.device : "";
+			var min_value = (data.length) ?data[0].record.value : 0;
 			for (var i=0; i<data.length; i++)
 			{
+				if (data[i].record.value < min_value)
+					min_value = data[i].record.value;
+				if (show_full && ("values" in data[i].record))
+				{
+					for (var value_name in data[i].record.values)
+					{
+						var the_value = data[i].record.values[value_name];
+						if (the_value < min_value)
+							min_value = the_value;
+					}
+				}
 				if (data[i].record.device != the_device)
 					continue;
 				var the_date = new Date(data[i].epoch * 1000);
@@ -204,7 +217,6 @@ var pi_sensors_readings = pi_sensors_readings ||
 			}
 			the_columns.push(the_times);
 
-			var show_full = document.getElementById("show_full").checked;
 			var the_data = {};
 			for (var i=0; i<data.length; i++)
 			{
@@ -215,8 +227,8 @@ var pi_sensors_readings = pi_sensors_readings ||
 					{
 						var the_name = device + "." + value_name;
 						var the_value = data[i].record.values[value_name];
-						if (use_log && (the_value > 1))
-							the_value = Math.log10(the_value);
+						if (use_log)
+							the_value = Math.log10(the_value + (1 - min_value));
 						if (!(the_name in the_data))
 							the_data[the_name] = [the_name];
 						the_data[the_name].push(the_value);
@@ -225,8 +237,8 @@ var pi_sensors_readings = pi_sensors_readings ||
 				else
 				{
 					var the_value = data[i].record.value;
-					if (use_log && (the_value > 1))
-						the_value = Math.log10(the_value);
+					if (use_log)
+						the_value = Math.log10(the_value + (1 - min_value));
 					if (!(device in the_data))
 						the_data[device] = [device];
 					the_data[device].push(the_value);
