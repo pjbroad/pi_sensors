@@ -34,18 +34,44 @@ app = flask.Flask(__name__)
 def latest(room, sensor):
 	today = int(time.strftime("%Y%m%d", time.localtime()))
 	day_query = { "date": {"$gte":today, "$lt":today+1 }, "type":sensor, "room":room }
-	return common.format_success(readings_collection.find_one({ "$query": day_query, "$orderby": { "epoch" : -1 } }, {"_id": False} ))
+	data = []
+	for device in list(readings_collection.find(day_query).distinct("record.device")):
+		day_query["record.device"] = device
+		data.append({"device":device, "record":readings_collection.find_one({ "$query": day_query, "$orderby": { "epoch" : -1 } }, {"_id": False})})
+	return common.format_success(data)
 
 
-@app.route("/<room>/<sensor>/range", methods=['GET'])
-def range(room, sensor):
+@app.route("/<room>/<sensor>/maxminperday", methods=['GET'])
+def maxminperday(room, sensor):
 	start_date, end_date, message = common.get_dates(flask.request.args)
 	if message:
 		return common.format_error(message)
 	day_query = { "date": {"$gte":start_date, "$lt":end_date }, "type":sensor, "room":room }
-	return common.format_success ( {
-			"max": readings_collection.find_one( { "$query": day_query, "$orderby": { "record.value" : -1 } }, {"_id": False} ),
-			"min": readings_collection.find_one( { "$query": day_query, "$orderby": { "record.value" : 1 } }, {"_id": False} ) } )
+	data = []
+	for device in list(readings_collection.find(day_query).distinct("record.device")):
+		day_query["record.device"] = device
+		if db.version < 3.0:
+			data.append({"device":device, "dates":readings_collection.aggregate([{"$match":day_query},
+				{"$group":{"_id":"$date", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}])["result"]})
+		else: 
+			data.append({"device":device, "dates":list(readings_collection.aggregate([{"$match":day_query},
+				{"$group":{"_id":"$date", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}]))})
+	return common.format_success(data)
+
+
+@app.route("/<room>/<sensor>/maxmin", methods=['GET'])
+def maxmin(room, sensor):
+	start_date, end_date, message = common.get_dates(flask.request.args)
+	if message:
+		return common.format_error(message)
+	day_query = { "date": {"$gte":start_date, "$lt":end_date }, "type":sensor, "room":room }
+	if db.version < 3.0:
+		data = readings_collection.aggregate([{"$match":day_query},
+			{"$group":{"_id":"$record.device", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}])["result"]
+	else: 
+		data = list(readings_collection.aggregate([{"$match":day_query},
+			{"$group":{"_id":"$record.device", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}]))
+	return common.format_success(data)
 
 
 @app.route("/<room>/<sensor>/get_readings", methods=['GET'])

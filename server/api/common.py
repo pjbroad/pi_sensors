@@ -50,6 +50,8 @@ def get_dates(args):
 
 class db:
 	def __init__(self):
+		versionstr = pymongo.version.split(".")
+		self.version = float(versionstr[0] + "." + versionstr[1])
 		self.config = get_config()
 		self.client = pymongo.MongoClient(self.config["hostname"], self.config["port"])
 		if "username" in self.config and "password" in self.config and self.config["username"] and self.config["password"]:
