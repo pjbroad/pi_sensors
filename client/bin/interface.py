@@ -38,7 +38,7 @@ class sender:
 		self.have_unsent = self._line_count() != 0
 
 	def _log(self, message):
-		print("%s: %s: %s" %(time.asctime(), self.hostname, message))
+		print("%s: %s: sender class: %s" %(time.asctime(), self.hostname, message))
 
 	def _line_count(self):
 		if os.path.exists(self.buffered_file):
@@ -79,14 +79,16 @@ class sender:
 				payload = data["data"]
 				successful = False
 				try:
-					r = requests.post(url, verify=self.certfile, data=json.dumps(payload))
+					r = requests.post(url, verify=self.certfile, data=json.dumps(payload), timeout=60)
 				except requests.exceptions.ConnectionError:
 					self._log("send failed to connect ....")
+				except requests.exceptions.Timeout:
+					self._log("send timed out ....")
 				except:
 					self._log("unknown send failed ....")
 				else:
 					if not r.status_code == 200:
-						self._log("send error code %d" %(r.status_code))
+						self._log("post error code %d" %(r.status_code))
 					elif not r.json().get("status", False):
 						self._log("invalid response [%s]" %r.json())
 					else:

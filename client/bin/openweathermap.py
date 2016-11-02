@@ -59,14 +59,16 @@ class device(object):
 			return
 		successful = False
 		try:
-			r = requests.get(self.url)
+			r = requests.get(self.url, timeout=60)
 		except requests.exceptions.ConnectionError:
 			self._log("send failed to connect ....")
+		except requests.exceptions.Timeout:
+			self._log("send timed out ....")
 		except:
 			self._log("unknown send failed ....")
 		else:
 			if not r.status_code == 200:
-				self._log("send error code %d" %(r.status_code))
+				self._log("get error code %d" %(r.status_code))
 			elif r.json().get("cnt", 0) < 1:
 				self._log("invalid response [%s]" %r.json())
 			else:
