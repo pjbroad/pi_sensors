@@ -32,8 +32,8 @@ app = flask.Flask(__name__)
 
 @app.route("/<room>/<sensor>/latest")
 def latest(room, sensor):
-	today = int(time.strftime("%Y%m%d", time.localtime()))
-	day_query = { "date": {"$gte":today, "$lt":today+1 }, "type":sensor, "room":room }
+	yesterday = int(time.strftime("%Y%m%d", time.localtime(time.time()-24*60*60)))
+	day_query = { "date": {"$gte":yesterday }, "type":sensor, "room":room }
 	data = []
 	for device in list(readings_collection.find(day_query).distinct("record.device")):
 		day_query["record.device"] = device

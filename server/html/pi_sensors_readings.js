@@ -148,24 +148,22 @@ var pi_sensors_readings = pi_sensors_readings ||
 			last_readings_h.style.display = 'inline';
 		else
 			last_readings_h.style.display = 'none';
+		this.update();
 	},
 
 	current: function(room)
 	{
 		function display_last(response)
 		{
-			var last_time_h = document.getElementById("last_time");
+			var last_readings_h = document.getElementById("last_readings")
+			var show_outdated_warning = true;
 			if (("data" in response) && (response.data.length > 0))
 			{
 				var first_reading = response.data[0].record;
 				var epoch_now = new Date().getTime();
 				var the_date = new Date(first_reading.epoch * 1000);
-				var thetext = this.formated_date(the_date) + " " +
+				var thetext = "<h2>" + this.formated_date(the_date) + " " +
 					("0" + the_date.getHours()).slice(-2) + ":" + ("0" + the_date.getMinutes()).slice(-2);
-				if ((epoch_now/1000.0 - first_reading.epoch) > 20*60)
-					thetext += " <span class='alert'>OUTDATED</span>";
-				last_time_h.innerHTML = thetext;
-				thetext = ""
 				for (var device in response.data)
 				{
 					var reading = response.data[device].record;
@@ -173,10 +171,16 @@ var pi_sensors_readings = pi_sensors_readings ||
 					if ("units" in reading.record && reading.record.units)
 						thetext += " " + reading.record.units;
 				}
-				document.getElementById("last_readings").innerHTML = thetext;
+				last_readings_h.innerHTML = thetext + "</h2>";
+				if ((epoch_now/1000.0 - first_reading.epoch) < 20*60)
+					show_outdated_warning = false;
 			}
 			else
-				last_time_h.innerHTML = "<span class='alert'>No Data Today</span>";
+				last_readings_h.innerHTML = "<h2>No recent data</h2>";
+			if (show_outdated_warning)
+				document.getElementById("warning_message").innerHTML = "<span class='alert'>OUTDATED</span>";
+			else
+				document.getElementById("warning_message").innerHTML = "";
 			var start_date = integer_date.date2yyyymmdd($( "#datepicker" ).datepicker( "getDate" ));
 			this.graph(start_date, this.current_room);
 		}
@@ -247,7 +251,7 @@ var pi_sensors_readings = pi_sensors_readings ||
 			for (var key in the_data)
 				the_columns.push(the_data[key]);
 
-			var page_width = Math.min(window.innerWidth, window.outerWidth);
+			var page_width = Math.min(window.innerWidth, window.outerWidth) - side_bar.get_width();
 			var page_height = Math.min(window.innerHeight, window.outerHeight);
 			var graph_height = page_height - document.getElementById("non_graph").offsetHeight;
 			var the_graph = c3.generate
@@ -271,4 +275,76 @@ var pi_sensors_readings = pi_sensors_readings ||
 		var months = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 		return days[thedate.getDay()] + " " + thedate.getDate() + " " + months[thedate.getMonth()];
 	},
+
+	toggleFullScreen: function ()
+	{
+		// Thanks: http://www.html5rocks.com/en/mobile/fullscreen/
+		var doc = window.document;
+		var docEl = doc.documentElement;
+		var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+		var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+		if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement)
+			requestFullScreen.call(docEl);
+		else
+			cancelFullScreen.call(doc);
+	},
 }
+
+
+var side_bar = side_bar ||
+{
+	// based on http://www.w3schools.com/howto/howto_js_sidenav.asp
+
+	width: 200,
+	current_width: 0,
+
+	get_width: function()
+	{
+		return this.current_width;
+	},
+
+	disable: function()
+	{
+		if (this.get_width())
+		{
+			this.close();
+			this.reenable = true;
+		}
+	},
+
+	enable: function()
+	{
+		if (this.reenable)
+		{
+			this.open();
+			this.reenable = false;
+		}
+	},
+
+	open: function()
+	{
+		var width_px = this.width + "px";
+		document.getElementById("side_bar_panel").style.width = width_px;
+		document.getElementById("main_panel").style.marginLeft = width_px;
+		this.current_width = this.width;
+		pi_sensors_readings.update();
+	},
+
+	close: function()
+	{
+		document.getElementById("side_bar_panel").style.width = "0";
+		document.getElementById("main_panel").style.marginLeft= "0";
+		this.current_width = 0;
+		pi_sensors_readings.update();
+	},
+
+	toggle:  function()
+	{
+		var width_px = this.width + "px";
+		if (document.getElementById("side_bar_panel").style.width === width_px)
+			this.close();
+		else
+			this.open();
+	},
+}
+

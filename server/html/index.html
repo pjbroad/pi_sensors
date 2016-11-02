@@ -38,17 +38,22 @@
 
 <body onload="pi_sensors_readings.init_page()">
 
+<div id="side_bar_panel" class="side_bar">
+	<a href="javascript:void(0)" class="closebtn" onclick="side_bar.close()">&times;</a>
+	</br><a href="/">Home</a>
+	</br><a href="#" onclick="pi_sensors_readings.toggleFullScreen();">Toggle Full-Screen</a>
+	</br></br><label><input type="checkbox" onchange="pi_sensors_readings.build_tabs()" id="show_full">Show Full</label>
+	</br><label><input type="checkbox" onchange="pi_sensors_readings.toggle_last_readings()" id="show_last_readings">Show Latest</label>
+	</br><label><input type="checkbox" onchange="pi_sensors_readings.update()" id="use_logscale">Log10 Y-Axis</label>
+</div>
+
+<div id="main_panel">
+
 <div id="non_graph">
-<h2>
-	<span id="last_time"></span>
-	<input type="checkbox" onchange="pi_sensors_readings.toggle_last_readings()" id="show_last_readings">
-	<span id="last_readings"></span>
-</h2>
+<span id="last_readings"></span>
 <div id="header">
-<ul><a href="/" class="normal_text"><li>Home</li></a></ul>
-<ul id="sensor_tabs"></ul>
-Full<input type="checkbox" onchange="pi_sensors_readings.build_tabs()" id="show_full">
-Log<input type="checkbox" onchange="pi_sensors_readings.update()" id="use_logscale">
+<ul><a href="#" class="normal_text" onclick="side_bar.toggle();"><li>&#9776;</li></a></ul>
+<ul id="sensor_tabs"></ul>&nbsp;<span id="warning_message"></span>
 <h3></h3>
 </div>
 
@@ -65,6 +70,8 @@ Log<input type="checkbox" onchange="pi_sensors_readings.update()" id="use_logsca
 </div>
 
 <div id="readings_graph"></div>
+
+</div>
 
 </body>
 </html>
