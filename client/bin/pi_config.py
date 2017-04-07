@@ -40,7 +40,7 @@ def get(config_file = os.path.join(os.path.dirname(__file__), "..", "config/pi_c
 					"BMP180": { "average_over":3, "read_period":10 },
 					"MCP9808": { "average_over":3, "read_period":10 },
 					"SenseHat": { "average_over":3, "read_period":10, "show_message_on":"middle" },
-					"DS18B20": { "average_over":3, "read_period":10 }
+					"DS18B20": { "average_over":3, "read_period":10 },
 					"BME280": { "mode":"BME280_OSAMPLE_1", "average_over":3, "read_period":10 }
 				}
 
