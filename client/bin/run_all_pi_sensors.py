@@ -27,6 +27,7 @@ import DS18B20
 import MCP9808
 import TSL2561
 import BMP180
+import BME280
 import SenseHat
 import lcd_panel
 import openweathermap
@@ -62,6 +63,7 @@ if __name__ == '__main__':
 			sensors.append(TSL2561.device(config, debug))
 			sensors.append(RCW0506.device(config, lcd, debug))
 			sensors.append(BMP180.device(config, debug))
+			sensors.append(BME280.device(config, debug))
 			sensors.append(SenseHat.device(config, debug))
 			enabled_sensors = ""
 			for sensor in sensors + [lcd, weather]:

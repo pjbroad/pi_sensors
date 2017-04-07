@@ -197,6 +197,22 @@ cd Adafruit_Python_BMP/
 sudo python ./setup.py install
 ```
 
+#### If you have the BME280 temperature/humidity/pressure sensor...
+Download and install the sensor driver and its dependancies.
+```
+sudo apt-get install build-essential python-pip
+mkdir -p $DEPSBASE && cd $DEPSBASE
+git clone https://github.com/adafruit/Adafruit_Python_GPIO.git
+cd Adafruit_Python_GPIO
+sudo python setup.py install
+```
+```
+mkdir -p $DEPSBASE && cd $DEPSBASE
+git clone https://github.com/adafruit/Adafruit_Python_BME280.git
+cd Adafruit_Python_BME280
+cp Adafruit_BME280.py $CODEBASE/client/bin/
+```
+
 #### If you have the MCP9808 temperature sensor...
 Download and install the sensor driver.
 ```
