@@ -37,7 +37,10 @@ def latest(room, sensor):
 	data = []
 	for device in list(readings_collection.find(day_query).distinct("record.device")):
 		day_query["record.device"] = device
-		data.append({"device":device, "record":readings_collection.find_one({ "$query": day_query, "$orderby": { "epoch" : -1 } }, {"_id": False})})
+		try:
+			data.append({"device":device, "record":readings_collection.find_one({ "$query": day_query, "$orderby": { "epoch" : -1 } }, {"_id": False})})
+		except Exception, e:
+			return common.format_error("Failed to get latest [%s]" %(str(e)))
 	return common.format_success(data)
 
 
@@ -50,12 +53,15 @@ def maxminperday(room, sensor):
 	data = []
 	for device in list(readings_collection.find(day_query).distinct("record.device")):
 		day_query["record.device"] = device
-		if db.version < 3.0:
-			data.append({"device":device, "dates":readings_collection.aggregate([{"$match":day_query},
-				{"$group":{"_id":"$date", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}])["result"]})
-		else: 
-			data.append({"device":device, "dates":list(readings_collection.aggregate([{"$match":day_query},
-				{"$group":{"_id":"$date", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}]))})
+		try:
+			if db.version < 3.0:
+				data.append({"device":device, "dates":readings_collection.aggregate([{"$match":day_query},
+					{"$group":{"_id":"$date", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}])["result"]})
+			else:
+				data.append({"device":device, "dates":list(readings_collection.aggregate([{"$match":day_query},
+					{"$group":{"_id":"$date", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}]))})
+		except Exception, e:
+			return common.format_error("Failed to get maxminperday [%s]" %(str(e)))
 	return common.format_success(data)
 
 
@@ -65,12 +71,15 @@ def maxmin(room, sensor):
 	if message:
 		return common.format_error(message)
 	day_query = { "date": {"$gte":start_date, "$lt":end_date }, "type":sensor, "room":room }
-	if db.version < 3.0:
-		data = readings_collection.aggregate([{"$match":day_query},
-			{"$group":{"_id":"$record.device", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}])["result"]
-	else: 
-		data = list(readings_collection.aggregate([{"$match":day_query},
-			{"$group":{"_id":"$record.device", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}]))
+	try:
+		if db.version < 3.0:
+			data = readings_collection.aggregate([{"$match":day_query},
+				{"$group":{"_id":"$record.device", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}])["result"]
+		else:
+			data = list(readings_collection.aggregate([{"$match":day_query},
+				{"$group":{"_id":"$record.device", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}]))
+	except Exception, e:
+		return common.format_error("Failed to get maxmin [%s]" %(str(e)))
 	return common.format_success(data)
 
 
@@ -80,18 +89,27 @@ def get_readings(room, sensor):
 	if message:
 		return common.format_error(message)
 	day_query = { "date": {"$gte":start_date, "$lt":end_date }, "type":sensor, "room":room }
-	return common.format_success( list(readings_collection.find({ "$query": day_query, "$orderby": { "epoch" : -1 } }, {"_id": False})) )
+	try:
+		return common.format_success( list(readings_collection.find({ "$query": day_query, "$orderby": { "epoch" : -1 } }, {"_id": False})) )
+	except Exception, e:
+		return common.format_error("Failed to get readings [%s]" %(str(e)))
 
 
 @app.route("/distinct/<the_info>")
 def info(the_info):
-	return common.format_success(list(readings_collection.distinct(the_info)))
+	try:
+		return common.format_success(list(readings_collection.distinct(the_info)))
+	except Exception, e:
+		return common.format_error("Failed to get distinct [%s] [%s]" %(the_info, str(e)))
 
 
 @app.route("/<room>/distinct/<the_info>")
 def room_info(room, the_info):
 	# use format compatable with older pymongo
-	return common.format_success(list(readings_collection.find({"room":room}).distinct(the_info)))
+	try:
+		return common.format_success(list(readings_collection.find({"room":room}).distinct(the_info)))
+	except Exception, e:
+		return common.format_error("Failed to get room info [%s]" %(str(e)))
 
 
 @app.route('/add_reading', methods=['POST'])
@@ -101,7 +119,10 @@ def add_reading():
 	for key in needed:
 		if not key in data:
 			return common.format_error("Missing [%s] when adding record" %(key))
-	readings_collection.insert(data)
+	try:
+		readings_collection.insert(data)
+	except Exception, e:
+		return common.format_error("Failed to insert reading to dB [%s]" %(str(e)))
 	return common.format_success(None)
 
 
@@ -115,7 +136,10 @@ def add_raw_weather():
 	if data['cnt'] < 1:
 		return common.format_error("Count is zero when adding raw weather" %(key))
 	for record in data['list']:
-		raw_weather_collection.insert(record)
+		try:
+			raw_weather_collection.insert(record)
+		except Exception, e:
+			return common.format_error("Failed to insert raw weather to dB [%s]" %(str(e)))
 	return common.format_success(None)
 
 
