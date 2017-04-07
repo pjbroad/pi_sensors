@@ -124,7 +124,10 @@ var pi_sensors_readings = pi_sensors_readings ||
 	update: function()
 	{
 		error_message.clear();
-		this.current(this.current_room);
+		if (this.current_room)
+			this.current(this.current_room);
+		else
+			error_message.display("No readings");
 	},
 
 	set_tab: function(tab_id)
