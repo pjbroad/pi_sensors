@@ -7,4 +7,5 @@ client/config/*.cert
 client/bin/TSL2561_get_readings
 client/bin/i2c_lib.py
 client/bin/lcddriver.py
+client/bin/Adafruit_BME280.py
 *.pyc
