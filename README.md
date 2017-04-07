@@ -15,6 +15,7 @@ The following sensors are currently supported but it should be simple to
 add others. Each is optional for a specific client.
 ```
 Pressure and temperature sensor - BMP180
+Temperature, pressure and humidity sensor - BME280
 Temperature sensor - MCP9808
 Temperature sensor - DS18B20
 Movement sensor - RCW-0506
