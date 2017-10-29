@@ -73,9 +73,14 @@ class sender:
 		if not os.path.exists(self.buffered_file):
 			return
 		with open(self.buffered_file, "r") as buffered, open(self.retry_file, "w") as failed:
+			failed_already_urls = {}
 			for line in buffered.readlines():
 				data = json.loads(line)
 				url = data["url"]
+				if url in failed_already_urls:
+					# if already failed this url, do not try again this time else we could take too long
+					failed.write("%s\n"%(json.dumps(data)))
+					continue
 				payload = data["data"]
 				successful = False
 				try:
@@ -94,7 +99,9 @@ class sender:
 					else:
 						successful = True
 				if not successful:
+					self._log("failed [%s] so will not try again this time" %(url))
 					failed.write("%s\n"%(json.dumps(data)))
+					failed_already_urls[url] = True
 		os.remove(self.buffered_file)
 		os.rename(self.retry_file, self.buffered_file)
 		num_lines = self._line_count()
@@ -110,6 +117,7 @@ class sender:
 if __name__ == '__main__':
 
 	config = pi_config.get()
+	print(json.dumps(config))
 	servers = []
 	for server_config in config["servers"]:
 		servers.append(sender(server_config))
@@ -119,5 +127,7 @@ if __name__ == '__main__':
 		server.add_reading("testing", {"type":"testtype"})
 		server.add_reading("testing", {"record":{"value": 42}})
 		server.add_reading("testing", {"type":"testtype", "record":{"value": 42}})
+		server.add_reading("testing", {"type":"testtype", "record":{"value": 41, "device":"virtual"}})
 		server.add_reading("testing", {"type":"testtype", "record":{"value": 42, "device":"virtual"}})
+		server.add_reading("testing", {"type":"testtype", "record":{"value": 43, "device":"virtual"}})
 		server.send()
