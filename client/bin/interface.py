@@ -30,7 +30,7 @@ class sender:
 		self.hostname = config["hostname"]
 		self.url = config["url"]
 		self.certfile = config.get("certfile",None)
-		tmp_dir = config["tmp_dir"]
+		tmp_dir = os.path.expanduser(config["tmp_dir"])
 		if not os.path.exists(tmp_dir):
 			os.makedirs(tmp_dir)
 		self.buffered_file = os.path.join(tmp_dir, "buffered_%s" %(self.hostname))

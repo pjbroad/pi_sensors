@@ -29,8 +29,8 @@ def get(config_file = os.path.join(os.path.dirname(__file__), "..", "config/pi_c
 					"debug": False,
 					"room":"testroom",
 					"servers" : [
-						{"tmp_dir":"/tmp/spool_pi_sensors", "hostname":"server1", "url":"https://server1/pi_sensors_api/", "certfile":"../config/server1.cert"},
-						{"tmp_dir":"/tmp/spool_pi_sensors", "hostname":"server2", "url":"https://server2/pi_sensors_api/", "certfile":"../config/server2.cert"} ],
+						{"tmp_dir":"~/spool_pi_sensors", "hostname":"server1", "url":"https://server1/pi_sensors_api/", "certfile":"../config/server1.cert"},
+						{"tmp_dir":"~/spool_pi_sensors", "hostname":"server2", "url":"https://server2/pi_sensors_api/", "certfile":"../config/server2.cert"} ],
 					"LCD": { "address":"0x3f", "timeout_seconds":30, "num_lines":4 },
 					"OWM": { "save_raw": False, "raw_file":None, "units":"metric",
 								"ids":[2643743, 5128581], "APPID":None,
