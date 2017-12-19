@@ -151,6 +151,8 @@ h3
 .side_bar .closebtn
 {
 	float: right;
+	margin-right: 0.25em;
+	font-size: 2em;
 }
 
 .side_bar a, label
