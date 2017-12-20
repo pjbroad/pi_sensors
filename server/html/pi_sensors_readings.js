@@ -24,6 +24,7 @@ var pi_sensors_readings = pi_sensors_readings ||
 	sensor_type_index: 0,
 	sensor_info: null,
 	current_room: null,
+	the_graph: null,
 
 	init_page: function()
 	{
@@ -257,7 +258,9 @@ var pi_sensors_readings = pi_sensors_readings ||
 			var page_width = Math.min(window.innerWidth, window.outerWidth) - side_bar.get_width();
 			var page_height = Math.min(window.innerHeight, window.outerHeight);
 			var graph_height = page_height - document.getElementById("non_graph").offsetHeight;
-			var the_graph = c3.generate
+			if (this.the_graph)
+				this.the_graph.destroy();
+			this.the_graph = c3.generate
 			({
 				bindto: '#readings_graph',
 				size: { height:graph_height-20, width:page_width-40 },
