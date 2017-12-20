@@ -185,11 +185,11 @@ var pi_sensors_readings = pi_sensors_readings ||
 				document.getElementById("warning_message").innerHTML = "<span class='alert'>OUTDATED</span>";
 			else
 				document.getElementById("warning_message").innerHTML = "";
-			var start_date = integer_date.date2yyyymmdd($( "#datepicker" ).datepicker( "getDate" ));
-			this.graph(start_date, this.current_room);
 		}
 		var start_date = integer_date.date2yyyymmdd(new Date());
 		var url = pi_sensors_config.paths["api"] + "/" + room + "/" + this.sensor_info.type + "/latest";
+		var start_date = integer_date.date2yyyymmdd($( "#datepicker" ).datepicker( "getDate" ));
+		this.graph(start_date, this.current_room);
 		request_common.get_data(url, display_last.bind(this));
 	},
 
