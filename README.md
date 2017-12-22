@@ -95,9 +95,10 @@ sudo a2enmod wsgi
 sudo service apache2 reload
 ```
 
-#### Configure paths used by JavaScript
-Modify server/config/template_pi_sensors_config.js to refer to your api
-directory then copy to html/pi_sensors_config.js. For example:
+#### Configure paths and other options used by JavaScript
+Copy server/config/template_pi_sensors_config.js to html/pi_sensors_config.js then modify the file
+to refer to your api directory. You can also alter other options in this file such as the auto
+update timer.  To copy and modify the file you can use:
 ```
 cd $CODEBASE/server/config
 cp template_pi_sensors_config.js pi_sensors_config.js
