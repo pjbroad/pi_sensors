@@ -163,6 +163,11 @@ var pi_sensors_readings = pi_sensors_readings ||
 
 	set_auto_update: function()
 	{
+		if ((typeof pi_sensors_config.update_interval_in_seconds === 'undefined') || (pi_sensors_config.update_interval_in_seconds < 1))
+		{
+			error_message.display("Configure update_interval_in_seconds > 1 second");
+			return;
+		}
 		if (this.update_interval_timer)
 		{
 			clearInterval(this.update_interval_timer);
