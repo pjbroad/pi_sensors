@@ -21,4 +21,6 @@
 var pi_sensors_config = pi_sensors_config ||
 {
 	paths : {"api":"/pi_sensors_api"},
+	auto_update_start_on : false,
+	update_interval_in_seconds : 30,
 }

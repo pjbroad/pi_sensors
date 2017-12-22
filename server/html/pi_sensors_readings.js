@@ -25,6 +25,7 @@ var pi_sensors_readings = pi_sensors_readings ||
 	sensor_info: null,
 	current_room: null,
 	the_graph: null,
+	update_interval_timer: null,
 
 	init_page: function()
 	{
@@ -39,6 +40,11 @@ var pi_sensors_readings = pi_sensors_readings ||
 			timer_id = setTimeout(self.update.bind(self), 100);
 		};
 		this.get_rooms();
+		if (pi_sensors_config.auto_update_start_on)
+		{
+			document.getElementById("auto_update_graph").checked = true;
+			this.set_auto_update();
+		}
 	},
 
 	build_tabs: function()
@@ -111,7 +117,7 @@ var pi_sensors_readings = pi_sensors_readings ||
 	change_day: function(delta)
 	{
 		var new_date = null;
-		if (delta == 0)
+		if ((typeof delta === 'undefined') || (delta == 0))
 			new_date = new Date();
 		else
 		{
@@ -145,7 +151,7 @@ var pi_sensors_readings = pi_sensors_readings ||
 			}
 	},
 
-	toggle_last_readings: function()
+	set_last_readings: function()
 	{
 		var last_readings_h = document.getElementById("last_readings")
 		if (document.getElementById("show_last_readings").checked)
@@ -153,6 +159,17 @@ var pi_sensors_readings = pi_sensors_readings ||
 		else
 			last_readings_h.style.display = 'none';
 		this.update();
+	},
+
+	set_auto_update: function()
+	{
+		if (this.update_interval_timer)
+		{
+			clearInterval(this.update_interval_timer);
+			this.update_interval_timer = null;
+		}
+		if (document.getElementById("auto_update_graph").checked)
+			this.update_interval_timer = setInterval(this.change_day.bind(this), pi_sensors_config.update_interval_in_seconds * 1000);
 	},
 
 	current: function(room)
