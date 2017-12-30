@@ -18,7 +18,7 @@
 
 var request_common = request_common ||
 {
-	get_post_callback: function(handler)
+	common_callback: function(handler)
 	{
 		if (this.readyState === this.DONE)
 		{
@@ -26,16 +26,16 @@ var request_common = request_common ||
 			{
 				if (!this.responseText || this.responseText.length === 0)
 				{
-					error_message.display("Empty response for get_data()");
+					error_message.display("Empty response for common callback");
 					return;
 				}
 				var response = JSON.parse(this.responseText);
 				if (typeof response.status === "undefined")
-					error_message.display("Invalid response for getdata: " + this.responseText);
+					error_message.display("Invalid response for common callback: " + this.responseText);
 				else if (!response.status)
 				{
 					if ((typeof response.message === "undefined") || (response.message.length<=0))
-						error_message.display("Unknown error");
+						error_message.display("Unknown error for common callback");
 					else
 						error_message.display(response.message);
 				}
@@ -43,14 +43,14 @@ var request_common = request_common ||
 					handler(response);
 			}
 			else
-				error_message.display("Unexpected http status code: " + this.status);
+				error_message.display("Unexpected http status code for common callback: " + this.status);
 		}
 	},
 
 	get_data: function(url, handler)
 	{
 		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() { request_common.get_post_callback.bind(this)(handler); };
+		request.onreadystatechange = function() { request_common.common_callback.bind(this)(handler); };
 		request.open("GET", url);
 		try
 		{
@@ -65,7 +65,7 @@ var request_common = request_common ||
 	post_data: function(url, handler, data)
 	{
 		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() { request_common.get_post_callback.bind(this)(handler); };
+		request.onreadystatechange = function() { request_common.common_callback.bind(this)(handler); };
 		request.open("POST", url);
 		try
 		{
@@ -73,7 +73,22 @@ var request_common = request_common ||
 		}
 		catch (err)
 		{
-			error_message.display("Failed to get data: " + err.message);
+			error_message.display("Failed to post data: " + err.message);
+		}
+	},
+
+	delete_resource: function(url, handler)
+	{
+		var request = new XMLHttpRequest();
+		request.onreadystatechange = function() { request_common.common_callback.bind(this)(handler); };
+		request.open("DELETE", url);
+		try
+		{
+			request.send();
+		}
+		catch (err)
+		{
+			error_message.display("Failed to delete resource: " + err.message);
 		}
 	}
 
