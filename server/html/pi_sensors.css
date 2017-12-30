@@ -41,7 +41,8 @@ h1
 	font-size: 1.25em;
 }
 
-h2 {
+h2
+{
 	background-color: #A0A0ED;
 	border:1px solid #888;
 	padding:5px;
@@ -51,7 +52,8 @@ h2 {
 	font-size: 1.25em;
 }
 
-.alert {
+.alert
+{
 	color: red;
 	background-color: white;
 }
@@ -148,22 +150,68 @@ h3
 	color: darkgrey;
 }
 
-.side_bar .closebtn
+.side_bar .closebtn, .admin_menu .closebtn, .sensor_select .closebtn
 {
 	float: right;
 	margin-right: 0.25em;
 	font-size: 2em;
 }
 
-.side_bar a, label
+.side_bar a, label, .admin_menu a, .sensor_select a
 {
 	text-decoration: none;
 	transition: 0.3s;
 	color: darkgrey;
 }
 
-.side_bar a:hover, .offcanvas a:focus, label:hover, .offcanvas label:focus
+.side_bar a:hover, .admin_menu a:hover, .sensor_select a:hover, .offcanvas a:focus, label:hover, .offcanvas label:focus
 {
 	color: white;
 }
 
+.admin_menu, .sensor_select
+{
+	position: absolute;
+	z-index: 1000;
+	background-color: #222222;
+	color: white;
+	padding: 15px;
+	box-shadow: 10px 10px 5px #111111;
+	font-size: 1.25em;
+	display: none;
+	overflow-y: auto;
+	max-height: 95%;
+	max-width: 50%;
+	margin: auto;
+}
+
+#sensor_select_table
+{
+    border: 1px solid grey;
+    width: 100%;
+}
+
+#sensor_select_table td
+{
+	text-align: left;
+    padding: 4px;
+	color: black;
+}
+
+#sensor_select_table tr:nth-child(even)
+{
+	background-color: white;
+}
+
+#sensor_select_table tr:nth-child(odd)
+{
+	background-color: lightgrey
+}
+
+#sensor_select_table th
+{
+	padding: 4px;
+	text-align: center;
+	background-color: #B2B2FF;
+	color: black;
+}

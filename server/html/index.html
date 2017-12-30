@@ -41,6 +41,7 @@
 		<a href="javascript:void(0)" class="closebtn" onclick="side_bar.close()">&times;</a>
 		</br><a href="/">Home</a>
 		</br><a onclick="pi_sensors_readings.toggleFullScreen();">Toggle Full-Screen</a>
+		</br><a onclick="admin_menu.open()">Config Menu</a>
 		</br>
 		</br><label><input type="checkbox" onchange="pi_sensors_readings.build_tabs()" id="show_full">Show Full</label>
 		</br><label><input type="checkbox" onchange="pi_sensors_readings.set_last_readings()" id="show_last_readings">Show Latest</label>
@@ -63,6 +64,21 @@
 					<button onclick="pi_sensors_readings.change_day(0); return false;">Now</button>
 					<input type="button" id="datepicker"  onchange="pi_sensors_readings.update()">
 				</form>
+			</div>
+			<div id="admin_menu_panel" class="admin_menu">
+				<a href="javascript:void(0)" class="closebtn" onclick="admin_menu.close()">&times;</a>
+				<br>Options:
+				<br><br><label onclick="admin_menu.refresh_information();">Refresh the room and sensor type information.</label>
+				<br><br><label onclick="admin_menu.generate_room_list();">Manually select shown room and sensor types from existing readings.</label>
+				<br><br><label onclick="admin_menu.reset_rooms();">Clear rooms and sensor lists and automatically set as new readings are received.</label>
+			</div>
+			<div id="sensor_select_panel" class="sensor_select">
+				<a href="javascript:void(0)" class="closebtn" onclick="sensor_select.close()">&times;</a>
+				</p>Manually select the rooms and room sensor types to show. Note that, once set,
+				new rooms or new room sensor types will have to be manually enabled.</p>
+				<table id="sensor_select_table">
+				</table>
+				</br><button onclick="sensor_select.submit(); return false;" id="sensor_select_button" disabled>Set Room Sensor Types</button>
 			</div>
 			<div id="error_message_panel"></div>
 		</div>

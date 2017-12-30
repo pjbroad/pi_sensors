@@ -78,8 +78,26 @@ var pi_sensors_readings = pi_sensors_readings ||
 				this.set_tab( (next_tab_id) ?next_tab_id :this.sensor_types[0].id );
 			}
 		}
-		var url = pi_sensors_config.paths["api"] + "/" + this.current_room + "/distinct/type";
+		var url = pi_sensors_config.paths["api"] + "/" + this.current_room + "/type_list";
 		request_common.get_data(url, handler.bind(this));
+	},
+
+	reset: function()
+	{
+		var sel = document.getElementById('rooms');
+		var ul_h = document.getElementById("sensor_tabs");
+		while( sel.firstChild )
+			sel.removeChild( sel.firstChild );
+		while( ul_h.firstChild )
+			ul_h.removeChild( ul_h.firstChild );
+		if (this.the_graph)
+			this.the_graph.destroy();
+		this.sensor_types = [];
+		this.sensor_type_index = 0;
+		this.sensor_info =  null;
+		this.current_room = null;
+		this.the_graph = null;
+		this.get_rooms();
 	},
 
 	get_rooms: function()
@@ -102,9 +120,11 @@ var pi_sensors_readings = pi_sensors_readings ||
 					this.current_room = rooms[0];
 					this.build_tabs();
 				}
+				else
+					error_message.display("No rooms, refresh page to recheck");
 			}
 		}
-		var url = pi_sensors_config.paths["api"] + "/distinct/room";
+		var url = pi_sensors_config.paths["api"] + "/room_list";
 		request_common.get_data(url, fill_select.bind(this));
 	},
 
@@ -134,7 +154,9 @@ var pi_sensors_readings = pi_sensors_readings ||
 		if (this.current_room)
 			this.current(this.current_room);
 		else
-			error_message.display("No readings");
+			this.get_rooms();
+		admin_menu.set_position();
+		sensor_select.set_position();
 	},
 
 	set_tab: function(tab_id)
@@ -363,6 +385,7 @@ var side_bar = side_bar ||
 		document.getElementById("side_bar_panel").style.width = "0";
 		document.getElementById("main_panel").style.marginLeft= "0";
 		this.current_width = 0;
+		admin_menu.close();
 		pi_sensors_readings.update();
 	},
 
@@ -376,3 +399,214 @@ var side_bar = side_bar ||
 	},
 }
 
+
+var admin_menu = admin_menu ||
+{
+	set_position: function()
+	{
+		var page_width = Math.min(window.innerWidth, window.outerWidth);
+		var page_height = Math.min(window.innerHeight, window.outerHeight);
+		var handle = document.getElementById("admin_menu_panel");
+		handle.style.left = (page_width - handle.offsetWidth) / 2 + "px";
+		handle.style.top = (page_height - handle.offsetHeight) / 4 + "px";
+	},
+
+	open: function()
+	{
+		document.getElementById("admin_menu_panel").style.display = "inline";
+		this.set_position();
+		sensor_select.close();
+	},
+
+	close: function()
+	{
+		document.getElementById("admin_menu_panel").style.display = "none";
+		sensor_select.close();
+	},
+
+	refresh_information: function()
+	{
+		pi_sensors_readings.reset();
+		this.close();
+	},
+
+	reset_rooms: function()
+	{
+		function room_list_handler(response)
+		{
+			function option_handler()
+			{
+				pi_sensors_readings.reset();
+			}
+			var url = pi_sensors_config.paths["api"] + "/option/manual";
+			request_common.delete_resource(url, option_handler.bind(this));
+		}
+		this.close();
+		var url = pi_sensors_config.paths["api"] + "/room_list";
+		request_common.delete_resource(url, room_list_handler.bind(this));
+	},
+
+	generate_room_list: function()
+	{
+		function room_list_handler(response)
+		{
+			function type_list_handler(response)
+			{
+				if (("data" in response) && (response.data != null))
+					sensor_select.open(room_list, response.data);
+			}
+			var room_list = response.data;
+			var url = pi_sensors_config.paths["api"] + "/distinct/type";
+			request_common.get_data(url, type_list_handler.bind(this));
+		}
+		this.close();
+		var url = pi_sensors_config.paths["api"] + "/distinct/room";
+		request_common.get_data(url, room_list_handler.bind(this));
+	},
+}
+
+
+var sensor_select = sensor_select ||
+{
+	room_list: null,
+	type_list: null,
+
+	open: function(room_list, type_list)
+	{
+		var tab_h = document.getElementById("sensor_select_table")
+		while (tab_h.rows.length > 0)
+			tab_h.deleteRow(0);
+		document.getElementById("sensor_select_button").disabled = true;
+		document.getElementById("sensor_select_panel").style.display = "inline";
+		this.room_list = room_list;
+		this.type_list = type_list;
+		this.set_position();
+		this.get_room_sensors();
+	},
+
+	close: function()
+	{
+		document.getElementById("sensor_select_button").disabled = true;
+		document.getElementById("sensor_select_panel").style.display = "none";
+	},
+
+	set_position: function()
+	{
+		var page_width = Math.min(window.innerWidth, window.outerWidth);
+		var page_height = Math.min(window.innerHeight, window.outerHeight);
+		var handle = document.getElementById("sensor_select_panel");
+		handle.style.left = (page_width - handle.offsetWidth) / 2 + "px";
+		handle.style.top = (page_height - handle.offsetHeight) / 4 + "px";
+	},
+
+	room_check_changed: function(room_index)
+	{
+		var checked = document.getElementById("SSR#" + room_index).checked;
+		for (var i=0; i<this.type_list.length; i++)
+		{
+			var type_check_h = document.getElementById("SST#" + room_index + "#" + i);
+			if (type_check_h)
+				type_check_h.checked = checked;
+		}
+	},
+
+	type_check_changed: function(room_index)
+	{
+		var total_types_checked = 0;
+		for (var i=0; i<this.type_list.length; i++)
+		{
+			var type_check_h = document.getElementById("SST#" + room_index + "#" + i);
+			if (type_check_h && type_check_h.checked)
+				total_types_checked++;
+		}
+		document.getElementById("SSR#" + room_index).checked = (total_types_checked > 0);
+	},
+
+	get_room_sensors: function ()
+	{
+		function types_handler(response)
+		{
+			if (("data" in response) && (response.data != null))
+			{
+				var row = tab_h.insertRow(-1);
+				var cell = row.insertCell(0);
+				var room_index = this.room_list.indexOf(response.data.room)
+				cell.innerHTML = '<input type="checkbox" onchange="sensor_select.room_check_changed(' + room_index + ')" id="SSR#' + room_index + '" checked>&nbsp;' + response.data.room;
+				for (var i=0; i<this.type_list.length; i++)
+				{
+					cell = row.insertCell(i+1);
+					if (response.data.type.indexOf(this.type_list[i]) >= 0)
+					{
+						var box_id = "SST#" + this.room_list.indexOf(response.data.room) + "#" + i;
+						cell.innerHTML = '<input type="checkbox" onchange="sensor_select.type_check_changed(' + room_index + ')" id="' + box_id + '" checked style="margin:auto; display:block;">';
+						cell.title = this.type_list[i];
+					}
+					else
+						cell.innerHTML = "&nbsp;";
+				}
+				if (++received_count == this.room_list.length)
+					document.getElementById("sensor_select_button").disabled = false;
+				this.set_position();
+			}
+		}
+		var received_count = 0;
+		var tab_h = document.getElementById("sensor_select_table")
+		var row = tab_h.createTHead().insertRow(0);
+		var headerCell = document.createElement("th");
+		headerCell.innerHTML = "Room";
+		row.appendChild(headerCell);
+		for (var i=0; i<this.type_list.length; i++)
+		{
+			headerCell = document.createElement("th");
+			headerCell.innerHTML = this.type_list[i][0].toUpperCase();
+			headerCell.title = this.type_list[i];
+			row.appendChild(headerCell);
+		}
+		for (var i=0; i<this.room_list.length; i++)
+		{
+			var url = pi_sensors_config.paths["api"] + "/" + this.room_list[i] + "/distinct/type";
+			request_common.get_data(url, types_handler.bind(this));
+		}
+	},
+
+	submit: function()
+	{
+		function set_option_handler(response)
+		{
+			function delete_rooms_handler(response)
+			{
+				function update_handler(response)
+				{
+					if (--responses_expected == 0)
+						pi_sensors_readings.reset();
+				}
+				var responses_expected = 0;
+				for (var room=0; room<this.room_list.length; room++)
+				{
+					var room_check_h = document.getElementById("SSR#" + room);
+					if (room_check_h && room_check_h.checked)
+					{
+						var room_types = [];
+						for (var type=0; type<this.type_list.length; type++)
+						{
+							var type_check_h = document.getElementById("SST#" + room + "#" + type);
+							if (type_check_h && type_check_h.checked)
+								room_types.push(this.type_list[type]);
+						}
+						if (room_types.length > 0)
+						{
+							responses_expected++;
+							var url = pi_sensors_config.paths["api"] + "/" + this.room_list[room] + "/type_list";
+							request_common.post_data(url, update_handler.bind(this), {"types":room_types});
+						}
+					}
+				}
+			}
+			var url = pi_sensors_config.paths["api"] + "/room_list";
+			request_common.delete_resource(url, delete_rooms_handler.bind(this));
+		}
+		this.close();
+		var url = pi_sensors_config.paths["api"] + "/option/manual";
+		request_common.post_data(url, set_option_handler.bind(this), true);
+	},
+}
