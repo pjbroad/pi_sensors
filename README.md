@@ -16,6 +16,7 @@ add others. Each is optional for a specific client.
 ```
 Pressure and temperature sensor - BMP180
 Temperature, pressure and humidity sensor - BME280
+Temperature, pressure, humidity and air quality sensor - BME680
 Temperature sensor - MCP9808
 Temperature sensor - DS18B20
 Movement sensor - RCW-0506
@@ -213,6 +214,24 @@ mkdir -p $DEPSBASE && cd $DEPSBASE
 git clone https://github.com/adafruit/Adafruit_Python_BME280.git
 cd Adafruit_Python_BME280
 cp Adafruit_BME280.py $CODEBASE/client/bin/
+```
+
+#### If you have the BME680 temperature/humidity/pressure/air quality sensor...
+Download and install the sensor driver and its dependancies.
+```
+sudo apt install python-bme680
+```
+All the sensor settings can be controled from the config file but as a mimimum, you need to set the
+readings control parameters and the humidity and gas baselines.  These example values should work
+fine but you may want to set the gas baseline to something over the maximum you see in your own
+data.  This will enable you to refine the air quality calculation.
+```
+    "BME680":{
+        "average_over":3,
+        "read_period":10,
+        "humidity_baseline":40.0,
+        "gas_baseline":500000.0
+    },
 ```
 
 #### If you have the MCP9808 temperature sensor...
