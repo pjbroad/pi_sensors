@@ -320,10 +320,25 @@ cd $CODEBASE/client/bin
 ./run_all_pi_sensors.py 10 1 testroom
 ```
 
-#### Starting client code after reboot
-To automatically start the sensors each time your pi is rebooted, you
-could add a line to the /etc/rc.local file.  A suitable bash script to
-wrap the main run_all_pi_sensors.py python script is provided.  For example:
+#### Running the client as a system service
+To automatically start pi sensors each time your pi is rebooted, you
+can use the provided systemd service file.  To set up the service use:
 ```
-su - pi -c "~pi/pi_sensors/client/bin/run_loop.sh &> ~/pi_sensors.log &"
+mkdir -p $CODEBASE/client/config
+cd $CODEBASE/client/config
+sed "s|###path-to-code###|$CODEBASE|g" ../template_pi_sensors.service > pi_sensors.service
+sudo systemctl enable  $CODEBASE/client/config/pi_sensors.service
+```
+To start, stop, check the status or disable the service use:
+```
+sudo systemctl start pi_sensors.service
+sudo systemctl stop pi_sensors.service
+sudo systemctl status pi_sensors.service
+sudo systemctl disable pi_sensors.service
+```
+
+To view or monitor the logging information use
+```
+journalctl -u pi_sensors.service
+journalctl -u pi_sensors.service -f
 ```
