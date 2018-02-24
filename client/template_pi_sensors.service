@@ -18,7 +18,7 @@
 
 # Set up
 # Use the provided template_pi_sensors.service to create pi_sensors.service
-# editing the ###path-to-code###/ in the [Service] section
+# editing the ###path-to-code###/ and ###user### in the [Service] section
 # systemctl enable ###path-to-your-service-script####/pi_sensors.service
 
 # Start the service
@@ -35,8 +35,8 @@ Description=Pi Sensors Client
 
 [Service]
 ExecStart=/bin/bash -c "###path-to-code###/client/bin/run_loop.sh"
-User=paul
-Group=paul
+User=###user###
+Group=###user###
 
 [Install]
 WantedBy=multi-user.target

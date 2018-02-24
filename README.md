@@ -327,6 +327,7 @@ can use the provided systemd service file.  To set up the service use:
 mkdir -p $CODEBASE/client/config
 cd $CODEBASE/client/config
 sed "s|###path-to-code###|$CODEBASE|g" ../template_pi_sensors.service > pi_sensors.service
+sed -i "s|###user###|$(id -un)|g" pi_sensors.service
 sudo systemctl enable  $CODEBASE/client/config/pi_sensors.service
 ```
 To start, stop, check the status or disable the service use:
