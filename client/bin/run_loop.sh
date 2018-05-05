@@ -21,6 +21,6 @@
 cd $(dirname $0)
 while true
 do
-	./run_all_pi_sensors.py 900 24
+	./run_all_pi_sensors.py 900 24 # move to config?
 	sleep 1
 done
