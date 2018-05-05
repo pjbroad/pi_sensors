@@ -51,9 +51,11 @@ var pi_sensors_readings = pi_sensors_readings ||
 	{
 		function handler(response)
 		{
+			var ul_h = document.getElementById("sensor_tabs");
+			while( ul_h.firstChild )
+				ul_h.removeChild( ul_h.firstChild );
 			if (("data" in response) && (response.data != null) && response.data.length)
 			{
-				var ul_h = document.getElementById("sensor_tabs");
 				var sensors = response.data;
 				var self = this;
 				var tab_id = 0;
@@ -84,12 +86,6 @@ var pi_sensors_readings = pi_sensors_readings ||
 
 	reset: function()
 	{
-		var sel = document.getElementById('rooms');
-		var ul_h = document.getElementById("sensor_tabs");
-		while( sel.firstChild )
-			sel.removeChild( sel.firstChild );
-		while( ul_h.firstChild )
-			ul_h.removeChild( ul_h.firstChild );
 		if (this.the_graph)
 			this.the_graph.destroy();
 		this.sensor_types = [];
@@ -104,10 +100,12 @@ var pi_sensors_readings = pi_sensors_readings ||
 	{
 		function fill_select(response)
 		{
+			var sel = document.getElementById('rooms');
+			while( sel.firstChild )
+				sel.removeChild( sel.firstChild );
 			if (("data" in response) && (response.data != null))
 			{
 				var rooms = response.data;
-				var sel = document.getElementById('rooms');
 				for (var i = 0; i < rooms.length; i++)
 				{
 					var opt = document.createElement('option');
