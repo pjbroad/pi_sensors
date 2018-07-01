@@ -32,6 +32,8 @@
 
 [Unit]
 Description=Pi Sensors Client
+Wants=network-online.target
+After=network.target network-online.target
 
 [Service]
 ExecStart=/bin/bash -c "###path-to-code###/client/bin/run_loop.sh"
