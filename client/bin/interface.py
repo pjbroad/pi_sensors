@@ -84,13 +84,15 @@ class sender:
 				payload = data["data"]
 				successful = False
 				try:
-					r = requests.post(url, verify=self.certfile, data=json.dumps(payload), timeout=60)
-				except requests.exceptions.ConnectionError:
+					r = requests.post(url, verify=self.certfile, data=json.dumps(payload), timeout=5)
+				except requests.exceptions.ConnectionError, err:
 					self._log("send failed to connect ....")
-				except requests.exceptions.Timeout:
+					self._log(err)
+				except requests.exceptions.Timeout, err:
 					self._log("send timed out ....")
-				except:
-					self._log("unknown send failed ....")
+					self._log(err)
+				except execption, err:
+					self._log("unknown send failed ....", err)
 				else:
 					if not r.status_code == 200:
 						self._log("post error code %d" %(r.status_code))
