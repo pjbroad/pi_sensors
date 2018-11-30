@@ -91,8 +91,9 @@ class sender:
 				except requests.exceptions.Timeout, err:
 					self._log("send timed out ....")
 					self._log(err)
-				except execption, err:
-					self._log("unknown send failed ....", err)
+				except Exception, err:
+					self._log("send failed with unexpected error ....")
+					self._log(err)
 				else:
 					if not r.status_code == 200:
 						self._log("post error code %d" %(r.status_code))
