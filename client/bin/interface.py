@@ -74,6 +74,7 @@ class sender:
 			return
 		with open(self.buffered_file, "r") as buffered, open(self.retry_file, "w") as failed:
 			failed_already_urls = {}
+			session = requests.Session()
 			for line in buffered.readlines():
 				data = json.loads(line)
 				url = data["url"]
@@ -84,7 +85,7 @@ class sender:
 				payload = data["data"]
 				successful = False
 				try:
-					r = requests.post(url, verify=self.certfile, data=json.dumps(payload), timeout=5)
+					r = session.post(url, verify=self.certfile, data=json.dumps(payload), timeout=5)
 				except requests.exceptions.ConnectionError, err:
 					self._log("send failed to connect ....")
 					self._log(err)
