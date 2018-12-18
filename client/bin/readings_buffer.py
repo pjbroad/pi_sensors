@@ -38,7 +38,7 @@ class readings_buffer:
 	def add(self):
 		self.readings.append(self.value_function() * self.scale)
 		if self.debug:
-			print(len(self.readings), self.readings[-self.average_over:])
+			print(len(self.readings), ' '.join(format(f, ".2f") for f in self.readings[-self.average_over:]))
 
 	def get_mean(self):
 		v = self.readings[-self.average_over:]
