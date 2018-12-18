@@ -42,7 +42,8 @@ def get(config_file = os.path.join(os.path.dirname(__file__), "..", "config/pi_c
 					"SenseHat": { "average_over":3, "read_period":10, "show_message_on":"middle" },
 					"DS18B20": { "average_over":3, "read_period":10 },
 					"BME280": { "mode":"BME280_OSAMPLE_1", "average_over":3, "read_period":10 },
-					"BME680": { "average_over":3, "read_period":10, "gas_baseline":500000.0, "humidity_baseline":40.0 }
+					"BME680": { "average_over":3, "read_period":10, "gas_baseline":500000.0, "humidity_baseline":40.0 },
+					"DHT": { "average_over":3, "read_period":10, "type":"22", "pin":22 }
 				}
 
 if __name__ == '__main__':

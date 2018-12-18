@@ -19,6 +19,7 @@ Temperature, pressure and humidity sensor - BME280
 Temperature, pressure, humidity and air quality sensor - BME680
 Temperature sensor - MCP9808
 Temperature sensor - DS18B20
+Temperature and humidity sensors - Adafruit DHT11, DHT22 and AM2302
 Movement sensor - RCW-0506
 Light sensor - TSL2561
 Temperature, pressure and humidity sensors - Sense Hat
@@ -188,7 +189,8 @@ You will need to enable i2c using the raspi-config for i2c sensors and
 
 #### Install additional Raspbian packages
 ```
-sudo apt-get install git python-requests python-dev python-gpiozero python-smbus
+sudo apt-get update
+sudo apt-get install git python-requests python-dev python-gpiozero python-smbus git build-essential
 ```
 
 #### If you have the BMP180 pressure sensor...
@@ -241,6 +243,15 @@ mkdir -p $DEPSBASE && cd $DEPSBASE
 git clone https://github.com/adafruit/Adafruit_Python_MCP9808
 cd Adafruit_Python_MCP9808
 sudo python ./setup.py install
+```
+
+#### If you have an Adafruit DHT11, DHT22 or AM2302 temperature/humidity sensor...
+Download and install the sensor driver.
+```
+mkdir -p $DEPSBASE && cd $DEPSBASE
+git clone https://github.com/adafruit/Adafruit_Python_DHT.git
+cd Adafruit_Python_DHT
+sudo python setup.py install
 ```
 
 #### If you have the TSL2561 light sensor...
