@@ -57,9 +57,9 @@ if __name__ == '__main__':
 			servers.append(interface.sender(server_config))
 
 		try:
+			sensors = lcd = weather = []
 			lcd = lcd_panel.device(config, debug)
 			weather = openweathermap.device(config, debug)
-			sensors = []
 			sensors.append(MCP9808.device(config, debug))
 			sensors.append(DS18B20.device(config, debug))
 			sensors.append(TSL2561.device(config, debug))
@@ -110,10 +110,11 @@ if __name__ == '__main__':
 					sys.stdout.flush()
 					send_count += 1
 
-		except:
-			print("%s: Exception caught, exiting" %(time.asctime()))
+		except Exception as err:
+			print("%s: Exception caught, exiting: [%s]" %(time.asctime(), repr(err)))
 			raise
 
 		finally:
 			for sensor in sensors + [lcd, weather]:
-				sensor.close()
+				if sensor:
+					sensor.close()
