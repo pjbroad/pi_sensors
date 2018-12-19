@@ -40,7 +40,7 @@ class device(general_device):
 		self.sensor = MCP9808.MCP9808()
 		if not self.sensor.begin():
 			raise Exception("Failed to initialise device %s" %(device.THE_DEVICE))
-		self.add_reading("temperature", "Temperature %.1f C", "C", self.sensor.readTempC)
+		self.add_reading("temperature", "%.1f", "C", self.sensor.readTempC)
 
 
 if __name__ == '__main__':

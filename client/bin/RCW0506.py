@@ -126,7 +126,7 @@ class device:
 			data = {"detections":self.pir.detections, "activity":activity }
 		return (self.pir.motion_detected, data)
 
-	def summary(self):
+	def summary(self, types, tags):
 		if not self.enabled:
 			return "No movement sensor"
 		have_motion, motion_data = self.current()

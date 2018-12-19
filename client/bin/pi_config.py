@@ -31,7 +31,15 @@ def get(config_file = os.path.join(os.path.dirname(__file__), "..", "config/pi_c
 					"servers" : [
 						{"tmp_dir":"~/spool_pi_sensors", "hostname":"server1", "url":"https://server1/pi_sensors_api/", "certfile":"../config/server1.cert"},
 						{"tmp_dir":"~/spool_pi_sensors", "hostname":"server2", "url":"https://server2/pi_sensors_api/", "certfile":"../config/server2.cert"} ],
-					"LCD": { "address":"0x3f", "timeout_seconds":30, "num_lines":4 },
+					"LCD": {
+						"address":"0x3f", "timeout_seconds":30, "num_lines":4, "num_colums":20,
+						"data_format":"%d %b %Y %H:%M:%S",
+						"lines": [
+							{ "num":1, "device":"DHT", "types":["temperature","humidity"] },
+							{ "num":2, "prefix":"Light ", "device":"TSL2561", "tags":[".lux",".ir"] },
+							{ "num":3, "device":"RCW0506" }
+						]
+					},
 					"OWM": { "save_raw": False, "raw_file":None, "units":"metric",
 								"ids":[2643743, 5128581], "APPID":None,
 								"url":"http://api.openweathermap.org/data/2.5/group" },

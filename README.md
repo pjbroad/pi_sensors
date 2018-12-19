@@ -288,6 +288,9 @@ else
 fi
 cp lcddriver.py $CODEBASE/client/bin/
 ```
+The first line of the display always shows the current time and date but you can configure the
+format.  The remaining lines can be configured to show readings from specified sensors.  View the
+generated configuration file to see an example configuration.
 
 #### Configure general client settings and sensors
 The client configuration file is used to specify the which sensors are

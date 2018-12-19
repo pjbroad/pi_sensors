@@ -46,6 +46,9 @@ class device:
 			print("LCD panel initialised")
 		self.off_delay = config[device.THE_DEVICE]["timeout_seconds"]
 		self.num_lines = config[device.THE_DEVICE]["num_lines"]
+		self.num_columns = config[device.THE_DEVICE].get("num_columns", 20)
+		self.date_format = config[device.THE_DEVICE].get("date_format", "%d %b %Y %H:%M:%S")
+		self.lines_config = config[device.THE_DEVICE].get("lines", [])
 		self.last_active = time.time()
 		self.is_active = False
 		self.terminate = False
@@ -68,16 +71,29 @@ class device:
 		if (state):
 			self._on()
 
-	def text(self, line, thetext):
+	def set_text(self, sensors):
+		if not self.is_on:
+			return
+		if not self.lines_config:
+			self._text(1, "no lines config")
+			return
+		for line in range(1, self.num_lines):
+			for lc in self.lines_config:
+				if lc["num"] == line:
+					for sensor in sensors:
+						if sensor.enabled and lc["device"] == sensor.THE_DEVICE:
+							self._text(line, lc.get("prefix","") + sensor.summary(lc.get("types",[]), lc.get("tags",[])))
+
+	def _text(self, line, thetext):
 		if not self.enabled:
 			return
 		if line < self.num_lines:
-			self.text_lines[line] = thetext
+			self.text_lines[line] = thetext.ljust(self.num_columns)
 
 	def _run(self, timing_out=False):
 		while not self.terminate:
 			if self.is_on:
-				self.text(0, time.strftime("%d %b %Y %H:%M:%S", time.localtime()))
+				self._text(0, time.strftime(self.date_format, time.localtime()))
 				if self.debug:
 					print("LCD text:")
 				for line in range(0,len(self.text_lines)):
@@ -87,7 +103,7 @@ class device:
 						print("  %d: [%s]" %(line, self.text_lines[line]))
 					if not simulate_mode:
 						self.driver.lcd_display_string(self.text_lines[line],line+1)
-			if not self.is_active and ((time.time() - self.last_active) > self.off_delay):
+			if not self.is_active and self.off_delay and ((time.time() - self.last_active) > self.off_delay):
 				self._off()
 			time.sleep(1)
 

@@ -43,9 +43,9 @@ class device(general_device):
 		mode = config[device.THE_DEVICE]["mode"]
 		if mode in modes:
 			self.sensor = BME280.BME280(modes[mode])
-			self.add_reading("temperature", "Temperature %.1f C", "C", self.sensor.read_temperature)
-			self.add_reading("humidity", "%.1f%%rH", "%rH", self.sensor.read_humidity)
-			self.add_reading("pressure", "%.1fPa", "Pa", self.sensor.read_pressure, scale=1.0)
+			self.add_reading("temperature", "%.1f", "C", self.sensor.read_temperature)
+			self.add_reading("humidity", "%.1f", "%rH", self.sensor.read_humidity)
+			self.add_reading("pressure", "%.1f", "Pa", self.sensor.read_pressure, scale=1.0)
 		else:
 			print("%s: Invalid mode [%s]" %(self.THE_DEVICE, mode))
 			self.enabled = False

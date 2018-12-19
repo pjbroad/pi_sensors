@@ -63,7 +63,7 @@ class device(general_device):
 		super(device, self).__init__(self.THE_DEVICE, config, HAVE_DEVICE, debug)
 		if not self.enabled:
 			return
-		self.add_reading("temperature", "Temperature %.1f C", "C", self._get_temperature)
+		self.add_reading("temperature", "%.1f", "C", self._get_temperature)
 
 
 if __name__ == '__main__':

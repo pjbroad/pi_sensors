@@ -116,11 +116,11 @@ class device(general_device):
 		self.sensor.set_gas_heater_duration(config[self.THE_DEVICE].get("heater_duration",150))
 		self.sensor.select_gas_heater_profile(config[self.THE_DEVICE].get("heater_profile",0))
 
-		self.add_reading("temperature", "Temperature %.1f C", "C", self.get_temperature)
-		self.add_reading("pressure", "%.1fPa", "Pa", self.get_pressure, scale=100.0)
-		self.add_reading("humidity", "%.1f%%rH", "%rH", self.get_humidity)
-		self.add_reading("gas-resistance", "%.1fOhms", "Ohms", self.get_gas_resistance)
-		self.add_reading("air-quality", "%0.1f%%", "%", self.calc_air_quality)
+		self.add_reading("temperature", "%.1f", "C", self.get_temperature)
+		self.add_reading("pressure", "%.1f", "Pa", self.get_pressure, scale=100.0)
+		self.add_reading("humidity", "%.1f", "%rH", self.get_humidity)
+		self.add_reading("gas-resistance", "%.1f", "Ohms", self.get_gas_resistance)
+		self.add_reading("air-quality", "%0.1f", "%", self.calc_air_quality)
 
 if __name__ == '__main__':
 

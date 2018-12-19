@@ -71,8 +71,8 @@ class device(general_device):
 		self.sensor_pin = config[self.THE_DEVICE]["pin"]
 
 		self.read_count = 0
-		self.add_reading("temperature", "Temperature %.1f C", "C", self.get_temperature, device_tag=config[self.THE_DEVICE]["type"])
-		self.add_reading("humidity", "%.1f%%rH", "%rH", self.get_humidity, device_tag=config[self.THE_DEVICE]["type"])
+		self.add_reading("temperature", "%.1f", "C", self.get_temperature, device_tag=config[self.THE_DEVICE]["type"])
+		self.add_reading("humidity", "%.1f", "%rH", self.get_humidity, device_tag=config[self.THE_DEVICE]["type"])
 
 
 if __name__ == '__main__':

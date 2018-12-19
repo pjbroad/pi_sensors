@@ -77,7 +77,7 @@ class general_device(object):
 				values.append(buf.get_mean())
 		return values
 
-	def summary(self):
+	def summary(self, types, tags):
 		if not self.enabled:
 			return "%s disabled" %(self.device)
 		values = self.current()
@@ -86,8 +86,10 @@ class general_device(object):
 		else:
 			thetext = ""
 			for i in range(len(values)):
-				if self.buffers[i].get_format_string():
-					thetext += self.buffers[i].get_format_string() %(values[i]) + " "
+				if not self.buffers[i].get_format_string(): continue
+				if len(types) and (not self.buffers[i].get_type() in types): continue
+				if len(tags) and (not self.buffers[i].get_tag() in tags): continue
+				thetext += self.buffers[i].get_format_string() %(values[i]) + self.buffers[i].get_units() + " "
 			return thetext.rstrip()
 
 	def get(self):

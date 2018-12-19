@@ -39,8 +39,8 @@ class device(general_device):
 		if not self.enabled:
 			return
 		self.sensor = BMP085.BMP085()
-		self.add_reading("temperature", "Temperature %.1f C", "C", self.sensor.read_temperature)
-		self.add_reading("pressure", "%.1fPa", "Pa", self.sensor.read_pressure)
+		self.add_reading("temperature", "%.1f", "C", self.sensor.read_temperature)
+		self.add_reading("pressure", "%.1f", "Pa", self.sensor.read_pressure)
 
 
 if __name__ == '__main__':

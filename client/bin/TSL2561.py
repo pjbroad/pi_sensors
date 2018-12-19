@@ -74,9 +74,9 @@ class device(general_device):
 			return
 		controller = config[device.THE_DEVICE]["i2c Controller"]
 		self.sensor = reading(controller, exec_path)
-		self.add_reading("light", "Light %.0f Lx", "Lx", self.sensor.get_lux, device_tag=".lux")
-		self.add_reading("light", None, None, self.sensor.get_ir, device_tag=".ir")
-		self.add_reading("light", None, None, self.sensor.get_bb, device_tag=".bb")
+		self.add_reading("light", "%.0f", "Lx", self.sensor.get_lux, device_tag=".lux")
+		self.add_reading("light", "%.0f", "IR", self.sensor.get_ir, device_tag=".ir")
+		self.add_reading("light", "%.0f", "BB", self.sensor.get_bb, device_tag=".bb")
 
 
 if __name__ == '__main__':

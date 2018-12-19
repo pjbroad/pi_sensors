@@ -81,12 +81,7 @@ if __name__ == '__main__':
 			last_send_time = time.time()
 			send_count = 0
 			while send_count < total_sends:
-				line = 1
-				if lcd.is_on:
-					for sensor in sensors:
-						if sensor.enabled:
-							lcd.text(line, sensor.summary().ljust(20))
-							line += 1
+				lcd.set_text(sensors)
 				time.sleep(1)
 				if time.time() - last_send_time > send_time_period:
 					last_send_time = time.time()
