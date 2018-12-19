@@ -59,16 +59,16 @@ class device(general_device):
 
 	def __init__(self, config, debug=False):
 
+		super(device, self).__init__(self.THE_DEVICE, config, HAVE_DEVICE_DRIVER, debug)
+		if not self.enabled:
+			return
+
 		types = { '11': Adafruit_DHT.DHT11, '22': Adafruit_DHT.DHT22, '2302': Adafruit_DHT.AM2302 }
 		if not config[self.THE_DEVICE]["type"] in types:
 			return
 
 		self.sensor_type = types[config[self.THE_DEVICE]["type"]]
 		self.sensor_pin = config[self.THE_DEVICE]["pin"]
-
-		super(device, self).__init__(self.THE_DEVICE, config, HAVE_DEVICE_DRIVER, debug)
-		if not self.enabled:
-			return
 
 		self.read_count = 0
 		self.add_reading("temperature", "Temperature %.1f C", "C", self.get_temperature, device_tag=config[self.THE_DEVICE]["type"])
