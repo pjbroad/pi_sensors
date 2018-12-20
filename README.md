@@ -114,19 +114,18 @@ unpack them and add the required files to the html/lib directory. For
 example:
 ```
 mkdir -p $DEPSBASE/js_libraries && cd $DEPSBASE/js_libraries
-wget -qO- https://github.com/c3js/c3/archive/0.4.11.tar.gz | tar xzv
+wget -qO - https://github.com/c3js/c3/archive/v0.4.24.tar.gz | tar xzv
 wget -q https://github.com/d3/d3/releases/download/v3.5.17/d3.zip && unzip -d d3-v3.5.17 d3.zip && rm d3.zip
-mkdir -p jquery-3.1.0 && cd jquery-3.1.0 && wget -qO jquery.min.js https://code.jquery.com/jquery-3.1.0.min.js && cd ..
-wget https://jqueryui.com/resources/download/jquery-ui-1.12.0.zip && unzip jquery-ui-1.12.0.zip && rm jquery-ui-1.12.0.zip
-
+mkdir -p jquery-3.3.1 && cd jquery-3.3.1 && wget -qO jquery.min.js https://code.jquery.com/jquery-3.3.1.min.js && cd ..
+wget https://jqueryui.com/resources/download/jquery-ui-1.12.1.zip && unzip jquery-ui-1.12.1.zip && rm jquery-ui-1.12.1.zip
 cd $CODEBASE/server/html && mkdir -p lib && cd lib
-ln -s $DEPSBASE/js_libraries/c3-0.4.11/c3.min.css
-ln -s $DEPSBASE/js_libraries/c3-0.4.11/c3.min.js
+ln -s $DEPSBASE/js_libraries/c3-0.4.24/c3.min.css
+ln -s $DEPSBASE/js_libraries/c3-0.4.24/c3.min.js
 ln -s $DEPSBASE/js_libraries/d3-v3.5.17/d3.min.js
-ln -s $DEPSBASE/js_libraries/jquery-3.1.0/jquery.min.js
-ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.0/jquery-ui.min.css
-ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.0/jquery-ui.min.js
-ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.0/images
+ln -s $DEPSBASE/js_libraries/jquery-3.3.1/jquery.min.js
+ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.1/jquery-ui.min.css
+ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.1/jquery-ui.min.js
+ln -s $DEPSBASE/js_libraries/jquery-ui-1.12.1/images
 ```
 
 #### Testing the database set-up
