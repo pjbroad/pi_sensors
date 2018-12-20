@@ -395,9 +395,9 @@ var swipe_handler = swipe_handler ||
 		if (elapse < this.max_touch_time)
 		{
 			if (Math.abs(move_x) > this.min_touch_dist && Math.abs(move_y) < this.max_other_dist)
-				pi_sensors_readings.change_day((move_x < 0)? -1 : 1);
+				pi_sensors_readings.change_day((move_x < 0)? 1 : -1);
 			else if (Math.abs(move_y) > this.min_touch_dist && Math.abs(move_x) <= this.max_other_dist)
-				pi_sensors_readings.prev_next_room((move_y < 0)? -1 : 1);
+				pi_sensors_readings.prev_next_room((move_y < 0)? 1 : -1);
 		}
 		evt.preventDefault();
 	},
