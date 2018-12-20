@@ -45,6 +45,11 @@ var pi_sensors_readings = pi_sensors_readings ||
 			document.getElementById("auto_update_graph").checked = true;
 			this.set_auto_update();
 		}
+
+		var el = document.getElementById("readings_graph");
+		el.addEventListener("touchstart", swipe_handler.handleStart.bind(swipe_handler), false);
+		el.addEventListener("touchmove", swipe_handler.handleMove.bind(swipe_handler), false);
+		el.addEventListener("touchend", swipe_handler.handleEnd.bind(swipe_handler), false);
 	},
 
 	build_tabs: function()
@@ -94,6 +99,24 @@ var pi_sensors_readings = pi_sensors_readings ||
 		this.current_room = null;
 		this.the_graph = null;
 		this.get_rooms();
+	},
+
+	prev_next_room: function(direction)
+	{
+		var rooms = document.getElementById('rooms');
+		var new_room_index = null;
+		for (var i = 0; i < rooms.length; i++)
+			if (this.current_room == rooms[i].value)
+				new_room_index = i + direction;
+		if (new_room_index != null)
+		{
+			if (new_room_index >= rooms.length)
+				new_room_index = 0;
+			else if (new_room_index < 0)
+				new_room_index = rooms.length -1;
+			this.current_room = document.forms.controls.room.value = rooms[new_room_index].value;
+			this.build_tabs();
+		}
 	},
 
 	get_rooms: function()
@@ -335,6 +358,48 @@ var pi_sensors_readings = pi_sensors_readings ||
 			requestFullScreen.call(docEl);
 		else
 			cancelFullScreen.call(doc);
+	},
+}
+
+
+var swipe_handler = swipe_handler ||
+{
+	start_touch_time: 0,
+	start_touch_x: 0,
+	start_touch_y: 0,
+	max_touch_time: 1000,
+	min_touch_dist: 100,
+	max_other_dist: 75,
+
+	handleStart: function(evt)
+	{
+		var to = evt.changedTouches[0];
+		this.start_touch_x = to.pageX;
+		this.start_touch_y = to.pageY;
+		this.start_touch_time = new Date().getTime();
+		evt.preventDefault();
+	},
+
+	handleMove: function(evt)
+	{
+		evt.preventDefault();
+	},
+
+	handleEnd: function(evt)
+	{
+		var swipe_direction = 'none';
+		var to = evt.changedTouches[0];
+		var move_x = to.pageX - this.start_touch_x;
+		var move_y = to.pageY - this.start_touch_y;
+		var elapse = new Date().getTime() - this.start_touch_time;
+		if (elapse < this.max_touch_time)
+		{
+			if (Math.abs(move_x) > this.min_touch_dist && Math.abs(move_y) < this.max_other_dist)
+				pi_sensors_readings.change_day((move_x < 0)? -1 : 1);
+			else if (Math.abs(move_y) > this.min_touch_dist && Math.abs(move_x) <= this.max_other_dist)
+				pi_sensors_readings.prev_next_room((move_y < 0)? -1 : 1);
+		}
+		evt.preventDefault();
 	},
 }
 
