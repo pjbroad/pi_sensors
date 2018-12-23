@@ -40,9 +40,13 @@ def get(config_file = os.path.join(os.path.dirname(__file__), "..", "config/pi_c
 							{ "num":3, "device":"RCW0506" }
 						]
 					},
-					"OWM": { "save_raw": False, "raw_file":None, "units":"metric",
-								"ids":[2643743, 5128581], "APPID":None,
-								"url":"http://api.openweathermap.org/data/2.5/group" },
+					"OWM":	{ "save_raw": False, "raw_file":None, "units":"metric", "APPID":None, "url":"http://api.openweathermap.org/data/2.5/group",
+								"grouped": False, "ids":[2643743, 5128581],
+								"_grouped": True, "groups": [
+									{"name":"owm.uk", "ids":[2653822, 2650225, 2643743, 2655984]},
+									{"name":"owm.wow", "ids":[5128581, 1850147, 1796236, 1642911]}
+								],
+							},
 					"RCW0506": { "GPIO":4 },
 					"TSL2561": { "i2c Controller":1, "average_over":3, "read_period":10, "exec_path":"./TSL2561_get_readings" },
 					"BMP180": { "average_over":3, "read_period":10 },

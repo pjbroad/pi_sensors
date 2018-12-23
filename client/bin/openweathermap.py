@@ -34,11 +34,17 @@ class device(object):
 			if debug:
 				print("%s disabled" %(self.THE_DEVICE))
 			return
-		self.enabled = True
 		config = config[self.THE_DEVICE]
+		self.grouped = config.get("grouped", False)
+		self.groups = config.get("groups", [])
 		ids = ""
-		for i in config["ids"]:
-			ids += str(i) + ","
+		if self.grouped:
+			for group in self.groups:
+				for i in group["ids"]:
+					ids += str(i) + ","
+		else:
+			for i in config["ids"]:
+				ids += str(i) + ","
 		ids = ids.strip(",")
 		self.url = config["url"] + "?id=" + ids + "&" + "APPID=" + config["APPID"]
 		if "units" in config:
@@ -48,6 +54,7 @@ class device(object):
 			self.temp_units = "K"
 		self.save_raw = config.get("save_raw", False)
 		self.raw_file = config.get("raw_file", None)
+		self.enabled = True
 
 	def update_raw(self):
 		if not self.enabled:
@@ -83,11 +90,19 @@ class device(object):
 			return []
 		records = []
 		for entry in self.raw_data["list"]:
-			location = entry["name"].lower()
+			if self.grouped:
+				room_name = self.THE_DEVICE + ".ungrouped"
+				for group in self.groups:
+					if entry["id"] in group["ids"]:
+						room_name = group["name"]
+				device_name = entry["name"].lower()
+			else:
+				room_name = entry["name"].lower()
+				device_name = self.THE_DEVICE
 			main = entry["main"]
-			records.append((location, {"type":"temperature", "record":{"value":main["temp"], "units":self.temp_units, "values":{"max":main["temp_max"] , "mean":main["temp"], "min":main["temp_min"]}, "device":self.THE_DEVICE}}))
-			records.append((location, {"type":"pressure", "record":{"value":main["pressure"]*100.0, "units":"Pa", "device":self.THE_DEVICE}}))
-			records.append((location, {"type":"humidity", "record":{"value":main["humidity"], "units":"%rH", "device":self.THE_DEVICE}}))
+			records.append((room_name, {"type":"temperature", "record":{"value":main["temp"], "units":self.temp_units, "values":{"max":main["temp_max"] , "mean":main["temp"], "min":main["temp_min"]}, "device":device_name, "owmid":entry["id"]}}))
+			records.append((room_name, {"type":"pressure", "record":{"value":main["pressure"]*100.0, "units":"Pa", "device":device_name, "owmid":entry["id"]}}))
+			records.append((room_name, {"type":"humidity", "record":{"value":main["humidity"], "units":"%rH", "device":device_name, "owmid":entry["id"]}}))
 		return records
 
 	def get_raw(self):
