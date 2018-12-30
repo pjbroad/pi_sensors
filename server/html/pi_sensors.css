@@ -23,6 +23,7 @@ body
 	font-family: verdana, sans-serif;
 	color: #000000;
 	background-color: #E4E6EC;
+	overflow: hidden;
 }
 
 div
