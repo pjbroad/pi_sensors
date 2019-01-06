@@ -290,10 +290,13 @@ var pi_sensors_readings = pi_sensors_readings ||
 			}
 			the_columns.push(the_times);
 
+			var devices = [];
 			var the_data = {};
 			for (var i=0; i<data.length; i++)
 			{
 				var device = data[i].record.device;
+				if (devices.indexOf(device) < 0)
+					devices.push(device);
 				if (show_full && ("values" in data[i].record))
 				{
 					for (var value_name in data[i].record.values)
@@ -317,8 +320,8 @@ var pi_sensors_readings = pi_sensors_readings ||
 					the_data[device].push(the_value);
 				}
 			}
-			for (var key in the_data)
-				the_columns.push(the_data[key]);
+			for (var key in devices.sort())
+				the_columns.push(the_data[devices[key]]);
 
 			var page_width = Math.min(window.innerWidth, window.outerWidth) - side_bar.get_width();
 			var page_height = Math.min(window.innerHeight, window.outerHeight);
