@@ -30,6 +30,8 @@ class sender:
 		self.hostname = config["hostname"]
 		self.url = config["url"]
 		self.certfile = config.get("certfile",None)
+		self.username = config.get("username",None)
+		self.password = config.get("password",None)
 		tmp_dir = os.path.expanduser(config["tmp_dir"])
 		if not os.path.exists(tmp_dir):
 			os.makedirs(tmp_dir)
@@ -75,6 +77,8 @@ class sender:
 		with open(self.buffered_file, "r") as buffered, open(self.retry_file, "w") as failed:
 			failed_already_urls = {}
 			session = requests.Session()
+			if self.username and self.password:
+				session.auth = (self.username, self.password)
 			for line in buffered.readlines():
 				data = json.loads(line)
 				url = data["url"]
