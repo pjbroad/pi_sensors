@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 #	Copyright 2016 Paul Broadhead
 #	Contact: pjbroad@twinmoons.org.uk
@@ -40,7 +40,7 @@ def latest(room, sensor):
 		day_query["record.device"] = device
 		try:
 			data.append({"device":device, "record":readings_collection.find_one({ "$query": day_query, "$orderby": { "epoch" : -1 } }, {"_id": False})})
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to get latest [%s]" %(str(e)))
 	return common.format_success(data)
 
@@ -61,7 +61,7 @@ def maxminperday(room, sensor):
 			else:
 				data.append({"device":device, "dates":list(readings_collection.aggregate([{"$match":day_query},
 					{"$group":{"_id":"$date", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}]))})
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to get maxminperday [%s]" %(str(e)))
 	return common.format_success(data)
 
@@ -79,7 +79,7 @@ def maxmin(room, sensor):
 		else:
 			data = list(readings_collection.aggregate([{"$match":day_query},
 				{"$group":{"_id":"$record.device", "min":{"$min":"$record.value"},"max":{"$max":"$record.value"}}}]))
-	except Exception, e:
+	except Exception as e:
 		return common.format_error("Failed to get maxmin [%s]" %(str(e)))
 	return common.format_success(data)
 
@@ -92,7 +92,7 @@ def get_readings(room, sensor):
 	day_query = { "date": {"$gte":start_date, "$lt":end_date }, "type":sensor, "room":room }
 	try:
 		return common.format_success( list(readings_collection.find({ "$query": day_query, "$orderby": { "epoch" : -1 } }, {"_id": False})) )
-	except Exception, e:
+	except Exception as e:
 		return common.format_error("Failed to get readings [%s]" %(str(e)))
 
 
@@ -100,7 +100,7 @@ def get_readings(room, sensor):
 def info(the_info):
 	try:
 		return common.format_success(list(readings_collection.distinct(the_info)))
-	except Exception, e:
+	except Exception as e:
 		return common.format_error("Failed to get distinct [%s] [%s]" %(the_info, str(e)))
 
 
@@ -109,7 +109,7 @@ def room_info(room, the_info):
 	# use format compatable with older pymongo
 	try:
 		return common.format_success({"room":room, the_info: list(readings_collection.find({"room":room}).distinct(the_info))})
-	except Exception, e:
+	except Exception as e:
 		return common.format_error("Failed to get room info [%s]" %(str(e)))
 
 
@@ -120,7 +120,7 @@ def room_option(option):
 	if flask.request.method == 'GET':
 		try:
 			rec = config_collection.find_one({ "type": "option", "name": option }, {"_id":0, "type":0} )
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to get options <%s> [%s]" %(option, str(e)))
 		return common.format_success(rec)
 	elif flask.request.method == 'POST':
@@ -130,13 +130,13 @@ def room_option(option):
 			record["value"] = data
 		try:
 			config_collection.update({"type": "option", "name": option}, record, upsert=True)
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to update options <%s> [%s]" %(option, str(e)))
 		return common.format_success(None)
 	elif flask.request.method == 'DELETE':
 		try:
 			rec = config_collection.remove({ "type": "option", "name": option })
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to delete options <%s> [%s]" %(option, str(e)))
 		return common.format_success(None)
 	else:
@@ -148,14 +148,14 @@ def room_list():
 	if flask.request.method == 'GET':
 		try:
 			rooms = list(config_collection.distinct("name", {"type": "room"}))
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to get rooms list [%s]" %(str(e)))
 		rooms.sort()
 		return common.format_success(rooms)
 	elif flask.request.method == 'DELETE':
 		try:
 			config_collection.remove({"type": "room"})
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to delete rooms list [%s]" %(str(e)))
 		return common.format_success(None)
 	else:
@@ -167,7 +167,7 @@ def type_list(room):
 	if flask.request.method == 'GET':
 		try:
 			rec = config_collection.find_one({"$query": { "type": "room", "name": room }})
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to read room types <%s> [%s]" %(room, str(e)))
 		if rec:
 			types = rec.get("types",[])
@@ -180,11 +180,11 @@ def type_list(room):
 		if type(data) is dict and "types" in data and len(data["types"]) > 0:
 			try:
 				config_collection.remove({ "type": "room", "name": room })
-			except Exception, e:
+			except Exception as e:
 				return common.format_error("Failed to remove existing room type list <%s> [%s]" %(room, str(e)))
 			try:
 				config_collection.insert({"type": "room", "name": room, "types": data["types"]})
-			except Exception, e:
+			except Exception as e:
 				return common.format_error("Failed to insert room type list <%s> [%s]" %(room, str(e)))
 			return common.format_success(None)
 		else:
@@ -202,13 +202,13 @@ def add_reading():
 			return common.format_error("Missing [%s] when adding record" %(key))
 	try:
 		readings_collection.insert(data)
-	except Exception, e:
+	except Exception as e:
 		return common.format_error("Failed to insert reading to dB [%s]" %(str(e)))
 
 	# if manually generated room list, return now
 	try:
 		rec = config_collection.find_one({ "type": "option", "name": "manual" } )
-	except Exception, e:
+	except Exception as e:
 		return common.format_error("Failed to get manu option [%s]" %(str(e)))
 	if rec and rec.get("name", None) == "manual" and rec.get("value", False):
 		return common.format_success(None)
@@ -216,12 +216,12 @@ def add_reading():
 	# if room not in rooms collection, add it with the type
 	try:
 		rec = config_collection.find_one({"$query": { "type": "room", "name": data["room"] }})
-	except Exception, e:
+	except Exception as e:
 		return common.format_error("Failed to read room collection [%s]" %(str(e)))
 	if not rec:
 		try:
 			config_collection.insert({"type": "room", "name": data["room"], "types": [data["type"]]})
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to insert room to collection [%s]" %(str(e)))
 	# if room already exists, add type if not already there
 	else:
@@ -229,7 +229,7 @@ def add_reading():
 			rec["types"].append(data["type"])
 			try:
 				config_collection.update({ "_id": rec["_id"] }, {"$set": { "types": rec["types"]} })
-			except Exception, e:
+			except Exception as e:
 				return common.format_error("Failed to update room collection [%s]" %(str(e)))
 
 	return common.format_success(None)
@@ -247,7 +247,7 @@ def add_raw_weather():
 	for record in data['list']:
 		try:
 			raw_weather_collection.insert(record)
-		except Exception, e:
+		except Exception as e:
 			return common.format_error("Failed to insert raw weather to dB [%s]" %(str(e)))
 	return common.format_success(None)
 
