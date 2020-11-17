@@ -189,7 +189,7 @@ You will need to enable i2c using the raspi-config for i2c sensors and
 #### Install additional Raspbian packages
 ```
 sudo apt-get update
-sudo apt-get install git python-requests python-dev python-gpiozero python-smbus git build-essential rng-tools
+sudo apt-get install git python-requests python-dev python-pip python-gpiozero python-smbus git build-essential rng-tools
 ```
 
 #### If you have the BMP180 pressure sensor...
