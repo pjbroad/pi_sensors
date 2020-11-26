@@ -295,14 +295,14 @@ var pi_sensors_readings = pi_sensors_readings ||
 			for (var i=0; i<data.length; i++)
 			{
 				var device = data[i].record.device;
-				if (devices.indexOf(device) < 0)
-					devices.push(device);
 				if (show_full && ("values" in data[i].record))
 				{
 					for (var value_name in data[i].record.values)
 					{
 						var the_name = device + "." + value_name;
 						var the_value = data[i].record.values[value_name];
+						if (devices.indexOf(the_name) < 0)
+							devices.push(the_name);
 						if (use_log)
 							the_value = Math.log10(the_value + (1 - min_value));
 						if (!(the_name in the_data))
@@ -313,6 +313,8 @@ var pi_sensors_readings = pi_sensors_readings ||
 				else
 				{
 					var the_value = data[i].record.value;
+					if (devices.indexOf(device) < 0)
+						devices.push(device);
 					if (use_log)
 						the_value = Math.log10(the_value + (1 - min_value));
 					if (!(device in the_data))
