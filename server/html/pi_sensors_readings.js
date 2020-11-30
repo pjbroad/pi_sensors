@@ -128,17 +128,23 @@ var pi_sensors_readings = pi_sensors_readings ||
 				sel.removeChild( sel.firstChild );
 			if (("data" in response) && (response.data != null))
 			{
+				var current_room = 0;
 				var rooms = response.data;
 				for (var i = 0; i < rooms.length; i++)
 				{
 					var opt = document.createElement('option');
 					opt.innerHTML = rooms[i];
 					opt.value = rooms[i];
+					if (opt.value == document.location.hash.substring(1))
+					{
+						opt.selected = true;
+						current_room = i;
+					}
 					sel.appendChild(opt);
 				}
 				if (rooms.length > 0)
 				{
-					this.current_room = rooms[0];
+					this.current_room = rooms[current_room];
 					this.build_tabs();
 				}
 				else
